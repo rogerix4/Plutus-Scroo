@@ -7,10 +7,11 @@ import pickle
 import hashlib
 import binascii
 import multiprocessing
+from numba import jit
 from ellipticcurve.privateKey import PrivateKey
 
-DATABASE = r'database/MAR_15_2021/'
-
+DATABASE_PATH = r'database/MAR_15_2021/'
+database = [set() for _ in range(4)]
 
 def generate_private_key():
     """
@@ -30,7 +31,7 @@ def private_key_to_public_key(private_key):
     Average Time: 0.0031567731 seconds
     """
     pk = PrivateKey().fromString(bytes.fromhex(private_key))
-    return '04' + pk.publicKey().toString().hex().upper()
+    return '04' + pk.publicKey().toString().encode().hex().upper()
 
 
 def public_key_to_address(public_key):
@@ -55,8 +56,7 @@ def public_key_to_address(public_key):
         output.append(alphabet[0])
     return ''.join(output[::-1])
 
-
-def process(private_key, public_key, address, database):
+def process(private_key, public_key, address):
     """
     Accept an address and query the database. If the address is found in the 
     database, then it is assumed to have a balance and the wallet data is 
@@ -73,9 +73,9 @@ def process(private_key, public_key, address, database):
                        'WIF private key: ' + str(private_key_to_WIF(private_key)) + '\n' +
                        'public key: ' + str(public_key) + '\n' +
                        'address: ' + str(address) + '\n\n')
-    else:
-        print(str(address))
-
+        print("gotcha!")
+    #else:
+    #    print(str(address))
 
 def private_key_to_WIF(private_key):
     """
@@ -104,7 +104,7 @@ def private_key_to_WIF(private_key):
     return chars[0] * pad + result
 
 
-def main(database):
+def main():
     """
     Create the main pipeline by using an infinite loop to repeatedly call the 
     functions, while utilizing multiprocessing from __main__. Because all the 
@@ -116,8 +116,7 @@ def main(database):
         public_key = private_key_to_public_key(
             private_key) 	# 0.0031567731 seconds
         address = public_key_to_address(public_key)		# 0.0000801390 seconds
-        process(private_key, public_key, address,
-                database) 	# 0.0000026941 seconds
+        process(private_key, public_key, address) 	# 0.0000026941 seconds
         # --------------------
         # 0.0032457721 seconds
 
@@ -128,13 +127,12 @@ if __name__ == '__main__':
     and O(1) complexity. Initialize the multiprocessing to target the main 
     function with cpu_count() concurrent processes.
     """
-    database = [set() for _ in range(4)]
-    count = len(os.listdir(DATABASE))
+    count = len(os.listdir(DATABASE_PATH))
     half = count // 2
     quarter = half // 2
-    for c, p in enumerate(os.listdir(DATABASE)):
+    for c, p in enumerate(os.listdir(DATABASE_PATH)):
         print('\rreading database: ' + str(c + 1) + '/' + str(count), end=' ')
-        with open(DATABASE + p, 'rb') as file:
+        with open(DATABASE_PATH + p, 'rb') as file:
             if c < half:
                 if c < quarter:
                     database[0] = database[0] | set(pickle.load(file))
@@ -151,4 +149,5 @@ if __name__ == '__main__':
     #print('database size: ' + str(sum(len(i) for i in database))); quit()
 
     for cpu in range(multiprocessing.cpu_count()):
-        multiprocessing.Process(target=main, args=(database, )).start()
+        print('proc')
+        multiprocessing.Process(target=main).start()
