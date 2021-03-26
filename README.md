@@ -4,18 +4,15 @@ A Bitcoin wallet collider that brute forces random wallet addresses
 
 # About This Fork
 
-Updated the chainstate database (March 15 2021)
-
-# Like This Project? Give It A Star
-
-[![](https://img.shields.io/github/stars/SayWhat69/Plutus.svg)](https://github.com/SayWhat69/Plutus)
+Fixed memory usage
 
 # Wanna Support Me?
 
 ```
-BTC: 16vp3EYZoP35MtdquQHxyhxT6ocbNFtw1K
-ETH: 0xD7C174Bd0B8b46700e0570a852180D16f3b16aa5
-LTC: MT2LsA7LHHsP2H84fhXBKWkU2B4ez7MerZ
+Please consider kind donation !
+
+BTC: bc1q5gkn0tln6su3tvwnld7xf7p20fjssaufles47d
+ETH: 0xD7A75bF1b64e302ad07b0843A9D295F9a9E3db8E
 ```
 
 # Dependencies
@@ -25,14 +22,6 @@ LTC: MT2LsA7LHHsP2H84fhXBKWkU2B4ez7MerZ
 Python modules listed in the <a href="/requirements.txt">requirements.txt<a/>
   
 Minimum <a href="#memory-consumption">RAM requirements</a>
-
-# Installation
-
-```
-$ git clone https://github.com/SayWhat69/Plutus.git plutus
-
-$ cd plutus && pip3 install -r requirements.txt
-```
 
 # Quick Start
 
@@ -81,20 +70,11 @@ However, if a wallet with a balance is found, then all necessary information abo
 
 # Memory Consumption
 
-This program uses approximately 2GB of RAM per CPU. Because this program uses multiprocessing, some data gets shared between threads making it difficult to accurately measure RAM usage.
+This program uses approximately 4GB of RAM (with current database ) total + some overhead (about 40 megs) for each core/cpu. 
 
-![Imgur](https://i.imgur.com/9Cq0yf3.png)
-
-The memory consumption stack trace was made by using <a href="https://pypi.org/project/memory-profiler/">mprof</a> to monitor this program brute force 10,000 addresses on a 4 logical processor machine with 8GB of RAM. As a result, 4 child processes were created, each consuming 2100MiB of RAM (~2GB).
+This is the big fix of this release if you find a bug in this fix please let me know ASAP
 
 # Recent Improvements & TODO
 
-- [X] Fixed typos/formatting
+- [X] Fixed memory use
 
-- [ ] Update database
-
-- [ ] Pickle loader
-
-- [ ] Try to fix Memory Error
-
-<a href="https://github.com/SayWhat69/Plutus/issues">Create an issue</a> so I can add more stuff to improve
