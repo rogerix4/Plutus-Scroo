@@ -1,12 +1,15 @@
 # Plutus Bitcoin Brute Forcer
 # Made by Isaac Delly
 # https://github.com/Isaacdelly/Plutus
+#
+# memcached workaround by Franz Kruhm https://github.com/franzkruhm/Plutus
 
 import os
 import pickle
 import hashlib
 import binascii
 import multiprocessing
+from datetime import datetime
 from pymemcache.client import base
 from ellipticcurve.privateKey import PrivateKey
 
@@ -18,7 +21,6 @@ def generate_private_key():
     """
     Generate a random 32-byte hex integer which serves as a randomly 
     generated Bitcoin private key.
-    Average Time: 0.0000061659 seconds
     """
     return binascii.hexlify(os.urandom(32)).decode('utf-8').upper()
 
@@ -29,7 +31,6 @@ def private_key_to_public_key(private_key):
     Because converting a private key to a public key requires SECP256k1 ECDSA 
     signing, this function is the most time consuming and is a bottleneck in 
     the overall speed of the program.
-    Average Time: 0.0031567731 seconds
     """
     pk = PrivateKey().fromString(bytes.fromhex(private_key))
     return '04' + pk.publicKey().toString().encode().hex().upper()
@@ -38,7 +39,6 @@ def private_key_to_public_key(private_key):
 def public_key_to_address(public_key):
     """
     Accept a public key and convert it to its resepective P2PKH wallet address.
-    Average Time: 0.0000801390 seconds
     """
     output = []
     alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
@@ -63,7 +63,6 @@ def process(private_key, public_key, address):
     database, then it is assumed to have a balance and the wallet data is 
     written to the hard drive. If the address is not in the database, then it 
     is assumed to be empty and printed to the user.
-    Average Time: 0.0000026941 seconds
     """
     if client.get(str(address)) == b'1': 
         with open('plutus.txt', 'a') as file:
@@ -71,6 +70,7 @@ def process(private_key, public_key, address):
                        'WIF private key: ' + str(private_key_to_WIF(private_key)) + '\n' +
                        'public key: ' + str(public_key) + '\n' +
                        'address: ' + str(address) + '\n\n')
+        print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
         print("!!!! GOT ONE !!!!")
     #else:
         #print(str(address))
@@ -109,15 +109,15 @@ def main():
     functions are relatively fast, it is better to combine them all into 
     one process.
     """
-    sanity_check = 1000000
+    sanity_check = 100000
     while True:
-        private_key = generate_private_key()			# 0.0000061659 seconds
-        public_key = private_key_to_public_key(
-            private_key) 	# 0.0031567731 seconds
-        address = public_key_to_address(public_key)		# 0.0000801390 seconds
-        process(private_key, public_key, address) 	# 0.0000026941 seconds
-        if sanity_check > 999999:
+        private_key = generate_private_key()			
+        public_key = private_key_to_public_key(private_key) 	
+        address = public_key_to_address(public_key)		
+        process(private_key, public_key, address) 	
+        if sanity_check > 99999:
             address = '1Ca72914TemMMuDpAscEMeZV3494sztc81'
+            print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
             if client.get(str(address)) == b'1': 
                 print("PROC sanity check pass")
                 sanity_check = 0
@@ -125,10 +125,7 @@ def main():
                 print("PROC check failed")
                 quit()
         sanity_check = sanity_check + 1
-        # --------------------
-        # 0.0032457721 seconds
-
-
+        
 if __name__ == '__main__':
     """
     Deserialize the database and read into a list of sets for easier selection 
@@ -138,17 +135,17 @@ if __name__ == '__main__':
     max_processes = multiprocessing.cpu_count()
     print("available threads: " + str(max_processes))
     print("connect memcached...")
-    #database = [set() for _ in range(1)]
-    database = set()
+    print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
     count = len(os.listdir(DATABASE_PATH))
     for c, p in enumerate(os.listdir(DATABASE_PATH)):
         print('\rreading database: ' + str(c + 1) + '/' + str(count), end=' ')
         with open(DATABASE_PATH + p, 'rb') as file:
-            database = set(pickle.load(file))
-        for i in database:
-            client.set(i, 1, expire=0)
+            database = pickle.load(file)
+            client.set_multi(dict.fromkeys(database, 1), expire=0)
+        database = []
     print('DONE LOADING DATABASE')
-    address = '1Ca72914TemMMuDpAscEMeZV3494sztc81'
+    print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
+    address = '3PQtD6B1crUVvNHt6fVY5HvdajRrJ6EeGq'
     if client.get(str(address)) == b'1': 
         print("sanity check pass")
     else:
@@ -160,3 +157,4 @@ if __name__ == '__main__':
         print("thread spawned: " + str(cpu))
         cpu = cpu + 1
         multiprocessing.Process(target=main).start()
+
