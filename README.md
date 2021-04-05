@@ -1,4 +1,4 @@
-# Plutus Bitcoin Brute Forcer
+# Plutus Bitcoin Brute Forcer, memcached workaround to the memory issue
 
 A Bitcoin wallet collider that brute forces random wallet addresses
 
