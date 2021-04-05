@@ -4,7 +4,7 @@ A Bitcoin wallet collider that brute forces random wallet addresses
 
 # About This Fork
 
-Fixed memory usage
+Workaround for memory usage using memcached. See the TODO list at the bottom for potential issues, this a quick and ugly workaround.
 
 # Wanna Support Me?
 
@@ -12,7 +12,10 @@ Fixed memory usage
 Please consider kind donation !
 
 BTC: bc1q5gkn0tln6su3tvwnld7xf7p20fjssaufles47d
+
 ETH: 0xD7A75bF1b64e302ad07b0843A9D295F9a9E3db8E
+
+DOT: 146LV65VWKxM3HsGWNMdjvB3YKg7JHYnRkeX2K3vSTJYxsdB 
 ```
 
 # Dependencies
@@ -26,7 +29,8 @@ Minimum <a href="#memory-consumption">RAM requirements</a>
 # Quick Start
 
 ```
-$ python3 plutus.py
+$ memcached -n 70 -m 4200 -t 12
+$ python3 plutus3.py
 ```
 
 # Proof Of Concept
@@ -47,9 +51,9 @@ This program also utilizes multiprocessing through the `multiprocessing.Process(
 
 # Efficiency
 
-It takes `0.0032457721` seconds for this progam to brute force a __single__ Bitcoin address. 
-
-However, through `multiprocessing.Process()` a concurrent process is created for every CPU your computer has. So this program can brute force addresses at a speed of `0.0032457721 ÷ cpu_count()` seconds.
+The efficiency on this workaround the memory issue has not been tested. You are welcome to post results and improve upon them.
+Sanity checks happen against a known address in the database on each thread after 1 million requests if it fails the program exits as this may mean a problem with memcached.
+Loading from pickles to memcached to slow, this needs to be worked on
 
 # Database FAQ
 
@@ -70,11 +74,13 @@ However, if a wallet with a balance is found, then all necessary information abo
 
 # Memory Consumption
 
-This program uses approximately 4GB of RAM (with current database ) total + some overhead (about 40 megs) for each core/cpu. 
+This program uses approximately 4.1GB of RAM (with current database) total + some overhead (about 8 megs) for each core/cpu. 
 
-This is the big fix of this release if you find a bug in this fix please let me know ASAP
+This is the big workaround of this release if you find a bug in this fix please let me know ASAP
 
 # Recent Improvements & TODO
 
 - [X] Fixed memory use
-
+- [ ] Improve loading times (possibly by using an unpickled database)
+- [ ] Check performance and ensure this fix really really works
+- [ ] Ensure proper RAM usage/size for memcached vs database
