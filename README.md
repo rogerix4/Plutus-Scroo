@@ -1,6 +1,6 @@
 # Scroo Bitcoin Brute Forcer, memcached workaround to the memory issue and fixed keygen
 
-A Bitcoin wallet collider that brute forces random wallet addresses
+A Bitcoin wallet collider that brute forces random wallet addresses from a databases on known addresses
 
 # About This Fork
 
@@ -25,8 +25,9 @@ DOT: 146LV65VWKxM3HsGWNMdjvB3YKg7JHYnRkeX2K3vSTJYxsdB
 # Quick Start
 
 ```
-$ memcached -n 70 -m 4200 -t 12
-$ python3 scroo.py
+$ memcached -n 70 -m 5200 -t 12
+$ python filldb.py
+$ python scroo.py
 ```
 
 # Proof Of Concept
@@ -66,6 +67,8 @@ This program uses approximately 4.1GB of RAM (with current database) total + som
 
 - [X] Fixed memory use
 - [X] Fixed keygen
+- [X] Split database loading from rest of code so "client" machines can now be used by changing connection IP in scroo.py
+- [X] Display some stats
 - [ ] Improve loading times (possibly by using an unpickled database)
 - [ ] Check performance
 - [ ] Check for stupid hidden bugs
