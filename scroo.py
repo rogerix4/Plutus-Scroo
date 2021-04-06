@@ -162,9 +162,10 @@ def main():
     while True:
         keys_t = keygen(max_processes)		
         process(keys_t)
-        if sanity_check < max_sanity_check:
+        if sanity_check > max_sanity_check:
             ret_list = client.get_multi(['3PQtD6B1crUVvNHt6fVY5HvdajRrJ6EeGq', '1Ca72914TemMMuDpAscEMeZV3494sztc81'])
             if ret_list:
+                print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
                 print('PROC sanity check pass')
                 ret_list = []
                 sanity_check = 0
