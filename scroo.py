@@ -161,13 +161,16 @@ def main():
     print('max sanity check: ' + str(max_sanity_check))
     while True:
         keys_t = keygen(max_processes)		
-        process(keys_t) 	
-        ret_list = client.get_multi(['3PQtD6B1crUVvNHt6fVY5HvdajRrJ6EeGq', '1Ca72914TemMMuDpAscEMeZV3494sztc81'])
-        if ret_list:
-            print('PROC sanity check pass')
-        else:
-            print('PROC sanity check failed')
-            quit()
+        process(keys_t)
+        if sanity_check < max_sanity_check:
+            ret_list = client.get_multi(['3PQtD6B1crUVvNHt6fVY5HvdajRrJ6EeGq', '1Ca72914TemMMuDpAscEMeZV3494sztc81'])
+            if ret_list:
+                print('PROC sanity check pass')
+                ret_list = []
+                sanity_check = 0
+            else:
+                print('PROC sanity check failed')
+                quit()
         sanity_check = sanity_check + 1
 
 ################################# ENTRY, DATA LOAD, THREAD START #################################
@@ -196,4 +199,3 @@ if __name__ == '__main__':
         print('thread spawned: ' + str(cpu))
         cpu = cpu + 1
         multiprocessing.Process(target=main).start()
-
