@@ -1,10 +1,14 @@
-# Plutus Bitcoin Brute Forcer, memcached workaround to the memory issue
+# Scroo Bitcoin Brute Forcer, memcached workaround to the memory issue and fixed keygen
 
 A Bitcoin wallet collider that brute forces random wallet addresses
 
 # About This Fork
 
-Workaround for memory usage using memcached. See the TODO list at the bottom for potential issues, this a quick and ugly workaround.
+Workaround for memory usage using memcached. Also fixes/replaces Plutus' keygen 
+
+BEWARE: MANY BUGS MAY YET STILL LURK, please review code carefully before using for production
+
+See the TODO list at the bottom for potential issues
 
 # Wanna Support Me?
 
@@ -18,19 +22,11 @@ ETH: 0xD7A75bF1b64e302ad07b0843A9D295F9a9E3db8E
 DOT: 146LV65VWKxM3HsGWNMdjvB3YKg7JHYnRkeX2K3vSTJYxsdB 
 ```
 
-# Dependencies
-
-<a href="https://www.python.org/downloads/">Python 3.6</a> or higher
-
-Python modules listed in the <a href="/requirements.txt">requirements.txt<a/>
-  
-Minimum <a href="#memory-consumption">RAM requirements</a>
-
 # Quick Start
 
 ```
 $ memcached -n 70 -m 4200 -t 12
-$ python3 plutus3.py
+$ python3 scroo.py
 ```
 
 # Proof Of Concept
@@ -39,20 +35,10 @@ A private key is a secret number that allows Bitcoins to be spent. If a wallet h
 
 This program is essentially a brute forcing algorithm. It continuously generates random Bitcoin private keys, converts the private keys into their respective wallet addresses, then checks the balance of the addresses. If a wallet with a balance is found, then the private key, public key and wallet address are saved to the text file `plutus.txt` on the user's hard drive. The ultimate goal is to randomly find a wallet with a balance out of the 2<sup>160</sup> possible wallets in existence. 
 
-# How It Works
-
-Private keys are generated randomly to create a 32 byte hexidecimal string using the cryptographically secure `os.urandom()` function.
-
-The private keys are converted into their respective public keys using the `starkbank-ecdsa` Python module. Then the public keys are converted into their Bitcoin wallet addresses using the `binascii` and `hashlib` standard libraries.
-
-A pre-calculated database of every P2PKH Bitcoin address with a positive balance is included in this project. The generated address is searched within the database, and if it is found that the address has a balance, then the private key, public key and wallet address are saved to the text file `plutus.txt` on the user's hard drive.
-
-This program also utilizes multiprocessing through the `multiprocessing.Process()` function in order to make concurrent calculations.
-
 # Efficiency
 
-The efficiency on this workaround the memory issue has not been tested. You are welcome to post results and improve upon them.
-Sanity checks happen against a known address in the database on each thread after 1 million requests if it fails the program exits as this may mean a problem with memcached.
+The efficiency of scroo has not been tested. You are welcome to post results and improve upon them.
+Sanity checks happen against a known address in the database on each thread after 100k requests if it fails the program exits as this may mean a problem with memcached.
 Loading from pickles to memcached to slow, this needs to be worked on
 
 # Database FAQ
@@ -76,11 +62,11 @@ However, if a wallet with a balance is found, then all necessary information abo
 
 This program uses approximately 4.1GB of RAM (with current database) total + some overhead (about 8 megs) for each core/cpu. 
 
-This is the big workaround of this release if you find a bug in this fix please let me know ASAP
-
 # Recent Improvements & TODO
 
 - [X] Fixed memory use
+- [X] Fixed keygen
 - [ ] Improve loading times (possibly by using an unpickled database)
-- [ ] Check performance and ensure this fix really really works
+- [ ] Check performance
+- [ ] Check for stupid hidden bugs
 - [ ] Ensure proper RAM usage/size for memcached vs database
