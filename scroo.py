@@ -156,11 +156,13 @@ def process(keys_list):
 
 ################################# THREAD CODE #################################
 def main():
-    sanity_check = 100000
+    max_sanity_check = int((100000/max_processes)-1)
+    sanity_check = max_sanity_check+1
+    print('max sanity check: ' + str(max_sanity_check))
     while True:
         keys_t = keygen(max_processes)		
         process(keys_t) 	
-        if sanity_check > 99999:
+        if sanity_check > max_sanity_check:
             address = '1Ca72914TemMMuDpAscEMeZV3494sztc81'
             print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
             if client.get(str(address)) == b'1': 
