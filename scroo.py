@@ -19,13 +19,16 @@ import hashlib
 import binascii
 import codecs
 import ecdsa
+import time
 import multiprocessing
 from datetime import datetime
 from pymemcache.client import base
 
+
 DATABASE_PATH = r'database/MAR_15_2021/'
 client = base.Client(('localhost', 11211))
 max_processes = int(multiprocessing.cpu_count()/2)
+
 
 ################################# KEYGENERATION #################################
 def base58(address_hex):
@@ -133,6 +136,7 @@ def keygen(num_keys):
         keys.append([private, wif, public, address, address_comp])
     return keys
 
+
 ################################# COMPARE CODE #################################
 def process(keys_list):
     keys_to_call = [];
@@ -158,45 +162,35 @@ def process(keys_list):
 def main():
     max_sanity_check = int((100000/max_processes)-1)
     sanity_check = max_sanity_check+1
-    print('max sanity check: ' + str(max_sanity_check))
+    #print('max sanity check: ' + str(max_sanity_check))
     while True:
         keys_t = keygen(max_processes)		
         process(keys_t)
         if sanity_check > max_sanity_check:
             ret_list = client.get_multi(['3PQtD6B1crUVvNHt6fVY5HvdajRrJ6EeGq', '1Ca72914TemMMuDpAscEMeZV3494sztc81'])
             if ret_list:
-                print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
-                print('PROC sanity check pass')
+                ##print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
+                ##print('PROC sanity check pass')
                 ret_list = []
                 sanity_check = 0
             else:
-                print('PROC sanity check failed')
+                print('ERROR: PROC sanity check failed')
                 quit()
         sanity_check = sanity_check + 1
+
 
 ################################# ENTRY, DATA LOAD, THREAD START #################################
 if __name__ == '__main__':
     print('available threads: ' + str(max_processes))
-    print('connect memcached...')
-    print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
-    count = len(os.listdir(DATABASE_PATH))
-    for c, p in enumerate(os.listdir(DATABASE_PATH)):
-        print('\rreading database: ' + str(c + 1) + '/' + str(count), end=' ')
-        with open(DATABASE_PATH + p, 'rb') as file:
-            database = pickle.load(file)
-            client.set_multi(dict.fromkeys(database, 1), expire=0)
-        database = []
-    print('DONE LOADING DATABASE')
-    print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
-    ret_list = client.get_multi(['3PQtD6B1crUVvNHt6fVY5HvdajRrJ6EeGq', '1Ca72914TemMMuDpAscEMeZV3494sztc81'])
-    if ret_list:
-        print('sanity check pass')
-    else:
-        print('check failed')
-        quit()
-
     cpu = 0
     while cpu < max_processes:
         print('thread spawned: ' + str(cpu))
         cpu = cpu + 1
         multiprocessing.Process(target=main).start()
+    while True:
+        time.sleep(15)
+        stats = client.stats()
+        print('\revictions: '+ str(stats.get(b'evictions')) + ' reclaimed: ' + str(stats.get(b'reclaimed')) +
+              ' connections: ' + str(stats.get(b'curr_connections')) + ' misses: ' + str(stats.get(b'get_misses')), end=' ')
+        if stats.get(b'evictions') > 0 or stats.get(b'reclaimed') > 0:
+                     print('!!! ERRORR !!!')
