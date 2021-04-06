@@ -14,7 +14,6 @@
 #################################################################################
 
 import os
-import pickle
 import hashlib
 import binascii
 import codecs
@@ -24,8 +23,6 @@ import multiprocessing
 from datetime import datetime
 from pymemcache.client import base
 
-
-DATABASE_PATH = r'database/MAR_15_2021/'
 client = base.Client(('localhost', 11211))
 max_processes = int(multiprocessing.cpu_count()/2)
 
@@ -194,3 +191,4 @@ if __name__ == '__main__':
               ' connections: ' + str(stats.get(b'curr_connections')) + ' misses: ' + str(stats.get(b'get_misses')), end=' ')
         if stats.get(b'evictions') > 0 or stats.get(b'reclaimed') > 0:
                      print('!!! ERRORR !!!')
+
