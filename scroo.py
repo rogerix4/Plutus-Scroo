@@ -25,7 +25,7 @@ from pymemcache.client import base
 
 DATABASE_PATH = r'database/MAR_15_2021/'
 client = base.Client(('localhost', 11211))
-max_processes = int(multiprocessing.cpu_count())
+max_processes = int(multiprocessing.cpu_count()/2)
 
 ################################# KEYGENERATION #################################
 def base58(address_hex):
@@ -162,15 +162,12 @@ def main():
     while True:
         keys_t = keygen(max_processes)		
         process(keys_t) 	
-        if sanity_check > max_sanity_check:
-            address = '1Ca72914TemMMuDpAscEMeZV3494sztc81'
-            print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
-            if client.get(str(address)) == b'1': 
-                print('PROC sanity check pass')
-                sanity_check = 0
-            else:
-                print('PROC check failed')
-                quit()
+        ret_list = client.get_multi(['3PQtD6B1crUVvNHt6fVY5HvdajRrJ6EeGq', '1Ca72914TemMMuDpAscEMeZV3494sztc81'])
+        if ret_list:
+            print('PROC sanity check pass')
+        else:
+            print('PROC sanity check failed')
+            quit()
         sanity_check = sanity_check + 1
 
 ################################# ENTRY, DATA LOAD, THREAD START #################################
@@ -187,8 +184,8 @@ if __name__ == '__main__':
         database = []
     print('DONE LOADING DATABASE')
     print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
-    address = '3PQtD6B1crUVvNHt6fVY5HvdajRrJ6EeGq'
-    if client.get(str(address)) == b'1': 
+    ret_list = client.get_multi(['3PQtD6B1crUVvNHt6fVY5HvdajRrJ6EeGq', '1Ca72914TemMMuDpAscEMeZV3494sztc81'])
+    if ret_list:
         print('sanity check pass')
     else:
         print('check failed')
@@ -199,3 +196,4 @@ if __name__ == '__main__':
         print('thread spawned: ' + str(cpu))
         cpu = cpu + 1
         multiprocessing.Process(target=main).start()
+
