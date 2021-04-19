@@ -1,4 +1,4 @@
-# Scroo Bitcoin Brute Forcer, memcached workaround to the memory issue and fixed keygen
+# Scroo Bitcoin Brute Forcer, memcached workaround the memory issue and fixed keygen
 
 A Bitcoin wallet collider that brute forces random wallet addresses from a databases of known addresses
 
