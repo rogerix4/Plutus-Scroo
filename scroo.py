@@ -12,6 +12,8 @@
 ## The GPL3 applies.                                                           ##
 ##                                                                             ##
 #################################################################################
+## This is the main bruteforcer.                                               ##
+#################################################################################
 
 import os
 import hashlib
@@ -25,6 +27,9 @@ from pymemcache.client import base
 
 client = base.Client(('localhost', 11211))
 max_processes = int(multiprocessing.cpu_count()/2)
+max_keys = 32
+sanity_1_s = ''
+sanity_2_s = ''
 
 
 ################################# KEYGENERATION #################################
@@ -144,34 +149,42 @@ def process(keys_list):
     if keys_ret:
         with open('plutus.txt', 'a') as file:
             for i in keys_list:
-                if (i[3] == keys_ret[0] or i[4] == keys_ret[0]):
-                     file.write('hex private key: ' + str(i[0]) + '\n' +
-                      'WIF private key: ' + str(i[1]) + '\n' +
-                      'public key: ' + str(i[2]) + '\n' +
-                      'address uncomp: ' + str(i[3]) + '\n' +
-                      'address comped: ' + str(i[4]) + '\n\n')
+                #if (i[3] == keys_ret[0] or i[4] == keys_ret[0]):
+                #     file.write('hex private key: ' + str(i[0]) + '\n' +
+                #      'WIF private key: ' + str(i[1]) + '\n' +
+                #      'public key: ' + str(i[2]) + '\n' +
+                #      'address uncomp: ' + str(i[3]) + '\n' +
+                #      'address comped: ' + str(i[4]) + '\n\n')
+                file.write(keys_ret)
+                file.write(keys_list)
+            print(keys_ret)
             print(keys_list)
         print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
         print('GOT ONE')
 
 
 ################################# THREAD CODE #################################
-def main():
-    max_sanity_check = int((100000/max_processes)-1)
+def main(sanity_1_s, sanity_2_s):
+    max_sanity_check = int((100000/max_keys)-1)
     sanity_check = max_sanity_check+1
     #print('max sanity check: ' + str(max_sanity_check))
     while True:
-        keys_t = keygen(max_processes)		
+        keys_t = keygen(max_keys)		
         process(keys_t)
         if sanity_check > max_sanity_check:
-            ret_list = client.get_multi(['3PQtD6B1crUVvNHt6fVY5HvdajRrJ6EeGq', '1Ca72914TemMMuDpAscEMeZV3494sztc81'])
-            if ret_list:
-                ##print(datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
-                ##print('PROC sanity check pass')
-                ret_list = []
+            ret = False
+            ret = client.get(sanity_1_s)
+            if ret:
                 sanity_check = 0
             else:
-                print('ERROR: PROC sanity check failed')
+                print('check failed:1')
+                quit()
+            ret = False
+            ret = client.get(sanity_2_s)
+            if ret:
+                sanity_check = 0
+            else:
+                print('check failed:2')
                 quit()
         sanity_check = sanity_check + 1
 
@@ -180,10 +193,15 @@ def main():
 if __name__ == '__main__':
     print('available threads: ' + str(max_processes))
     cpu = 0
+    f = open('sanity.txt', 'r')
+    sanity_1_s = f.readline().strip()
+    sanity_2_s = f.readline().strip()
+    f.close()
+    print('sanities: ' + sanity_1_s + ' ' + sanity_2_s)
     while cpu < max_processes:
         print('thread spawned: ' + str(cpu))
         cpu = cpu + 1
-        multiprocessing.Process(target=main).start()
+        multiprocessing.Process(target=main, args=(sanity_1_s, sanity_2_s)).start()
     while True:
         time.sleep(15)
         stats = client.stats()
