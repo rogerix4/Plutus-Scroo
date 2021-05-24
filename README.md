@@ -45,6 +45,7 @@ Loading from pickles to memcached to slow, this needs to be worked on
 # Database FAQ
 
 An offline database is used to find the balance of generated Bitcoin addresses. Visit <a href="/database/">/database</a> for information.
+Using filldb-text.py you can also load a text file (data.txt) with a list of public addresses.
 
 # Expected Output
 
@@ -69,7 +70,7 @@ This program uses approximately 4.1GB of RAM (with current database) total + som
 - [X] Fixed keygen
 - [X] Split database loading from rest of code so "client" machines can now be used by changing connection IP in scroo.py
 - [X] Display some stats
-- [ ] Improve loading times (possibly by using an unpickled database)
+- [X] Improve loading times, now supports reading directly for data.txt (expect 3mn to load about 38 million addresses from data.txt)
 - [ ] Check performance
-- [ ] Check for stupid hidden bugs
+- [X] Fixed sanity checking, see scroo.py and filldb-text.py
 - [ ] Ensure proper RAM usage/size for memcached vs database
