@@ -10,6 +10,8 @@ BEWARE: MANY BUGS MAY YET STILL LURK, please review code carefully before using 
 
 See the TODO list at the bottom for potential issues
 
+PLEASE NOTE: filldb.py (from pickle files) is no longer supported. filldb-text.py is the way to go using a text file containing the addresses to be tested against.
+
 # Wanna Support Me?
 
 ```
@@ -28,9 +30,10 @@ DOT: 146LV65VWKxM3HsGWNMdjvB3YKg7JHYnRkeX2K3vSTJYxsdB
 
 ```
 $ memcached -n 70 -m 5200 -t 12
-$ python filldb.py
+$ python filldb-text.py
 $ python scroo.py
 ```
+Note: depending on the current size of the database you may need to adjust the -m option on memcached.
 
 # Proof Of Concept
 
