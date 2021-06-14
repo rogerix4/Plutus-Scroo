@@ -12,6 +12,13 @@ See the TODO list at the bottom for potential issues
 
 PLEASE NOTE: filldb.py (from pickle files) is no longer supported. filldb-text.py is the way to go using a text file containing the addresses to be tested against.
 
+# About memcached
+
+You will need to download a 64bit version of memcached. 
+On windows 10 performance testing showed that memcached 1.4.5 performed better than recent versions (1.6...) taking 3.5mn to test 1 million addresses (instead of 5mn) on a i7-10750h laptop
+Thus an older version of memcached seems considerably faster.
+Thus at this time on Windows 10 the version of memcached I would recommend can be found at http://downloads.northscale.com/memcached-1.4.5-amd64.zip
+
 # Wanna Support Me?
 
 ```
