@@ -36,7 +36,7 @@ DOT: 146LV65VWKxM3HsGWNMdjvB3YKg7JHYnRkeX2K3vSTJYxsdB
 # Quick Start
 
 ```
-$ memcached -n 70 -m 5200 -t 12
+$ memcached -n 70 -m 5200 -M -t 12
 $ python filldb-text.py
 $ python scroo.py
 ```
