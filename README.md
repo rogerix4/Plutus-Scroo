@@ -84,6 +84,6 @@ This program uses approximately 4.1GB of RAM (with current database) total + som
 - [X] Split database loading from rest of code so "client" machines can now be used by changing connection IP in scroo.py
 - [X] Display some stats
 - [X] Improve loading times, now supports reading directly for data.txt (expect 3mn to load about 38 million addresses from data.txt)
-- [ ] Check performance
+- [X] Check performance, performance is better with an older version of memcached on Windows. numba doesn't change performance if anything it is slower.
 - [X] Fixed sanity checking, see scroo.py and filldb-text.py
 - [ ] Ensure proper RAM usage/size for memcached vs database
