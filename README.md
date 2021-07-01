@@ -56,8 +56,9 @@ Loading from pickles to memcached to slow, this needs to be worked on
 
 # Database FAQ
 
-An offline database is used to find the balance of generated Bitcoin addresses. Visit <a href="/database/">/database</a> for information.
-Using filldb-text.py you can also load a text file (data.txt) with a list of public addresses.
+An offline database is used to find the balance of generated Bitcoin addresses.
+Using filldb-text.py you can load a text file (data.txt) with a list of public addresses. (without balance)
+Please use responsibly, do not burden servers that list bitcoin addresses by constantly downloading copies of the database. Keep a local copy.
 
 # Expected Output
 
