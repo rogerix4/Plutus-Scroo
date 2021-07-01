@@ -87,3 +87,4 @@ This program uses approximately 4.1GB of RAM (with current database) total + som
 - [X] Check performance, performance is better with an older version of memcached on Windows. numba doesn't change performance if anything it is slower.
 - [X] Fixed sanity checking, see scroo.py and filldb-text.py
 - [ ] Ensure proper RAM usage/size for memcached vs database
+- [ ] Optimize code
