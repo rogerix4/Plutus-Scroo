@@ -22,14 +22,12 @@ Thus at this time on Windows 10 the version of memcached I would recommend can b
 # Wanna Support Me?
 
 ```
-Please consider kind donation !
+Please consider kind support !
 
-https://paypal.me/fkruhm
+https://ko-fi.com/zanfr
 
 BTC: bc1q5gkn0tln6su3tvwnld7xf7p20fjssaufles47d
-
 ETH: 0xD7A75bF1b64e302ad07b0843A9D295F9a9E3db8E
-
 DOT: 146LV65VWKxM3HsGWNMdjvB3YKg7JHYnRkeX2K3vSTJYxsdB 
 ```
 
