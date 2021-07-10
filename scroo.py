@@ -203,10 +203,11 @@ if __name__ == '__main__':
         cpu = cpu + 1
         multiprocessing.Process(target=main, args=(sanity_1_s, sanity_2_s)).start()
     while True:
-        time.sleep(15)
-        stats = client.stats()
-        print('\revictions: '+ str(stats.get(b'evictions')) + ' reclaimed: ' + str(stats.get(b'reclaimed')) +
-              ' connections: ' + str(stats.get(b'curr_connections')) + ' misses: ' + str(stats.get(b'get_misses')), end=' ')
-        if stats.get(b'evictions') > 0 or stats.get(b'reclaimed') > 0:
+        data = client.get_stats()
+        stats = re.sub('\{|\}|\(|\)','',str(data[0])).split(',')
+        print(stats[35]+stats[36]+stats[6]+stats[13])
+        
+        if int(stats[35].replace('\'','').split(':')[1]) > 0 or int(stats[36].replace('\'','').split(':')[1]) > 0:
                      print('!!! ERRORR !!!')
+        time.sleep(15)
 
